@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>StarterKit: Angular Testing</title>
+
+		<meta name="description" content="Angular Testing part of Capgemini StarterKit programme.">
+		<meta name="author" content="Lukasz Sidorkiewicz, Przemyslaw Kedzierski">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section id="start">
+					<h3><strong>StarterKit: Angular Testing</strong></h3>
+					<p>Testing Angular web applications</p>
+					<h2><img class="plain" src="img/angular-testing.png"></h2>
+					<p>
+						<small>Created by <a href="https://github.com/lsidorki">Lukasz Sidorkiewicz</a> / <a href="https://github.com/pkedzier">Przemyslaw Kedzierski</a></small>
+					</p>
+				</section>
+				<section id="agenda">
+					<h3>Agenda</h3>
+					<small>
+						<ol>
+							<li><a href="#/tools">Tools</a></li>
+							<li><a href="#/quickstart">Setting Up the Environment</a></li>
+							<li><a href="#/component">Testing a Component</a></li>
+							<li><a href="#/good-practices">Good Practices</a></li>
+						</ol>
+					</small>
+				</section>
+				<section id="tools">
+					<h3>Tools</h3>
+					<small>
+					<ul>
+						<li>Jasmine</li>
+						<li>Karma</li>
+						<li>Protractor</li>
+					</ul>
+					</small>
+				</section>
+				<section id="quickstart">
+					<section id="quickstart-configuration">
+						<h3>Karma configuration</h3>
+						<small>
+						<p>Tests configuration is defined in <i>karma.conf.js</i> file. Tests should follow the dommon filename convention <i>*.spec.ts.</i></p>
+						</small>
+					</section>
+					<section id="quickstart-startup" data-markdown>
+						<h3>Quick Start with Karma</h3>
+						<p>
+							git clone https://github.com/angular/quickstart.git quickstart
+							cd quickstart
+							npm install
+							npm test
+						</p>
+					</section>
+					<section id="quickstart-structure" data-markdown>
+						<h3>Simple test structure</h3>
+						<p>
+							// file: test.spec.ts
+							describe('Test Suite', () => {
+								it('should do sth reasonable', () => expect(true).toBe(true));
+							});
+						</p>
+					</section>
+				</section>
+				<section id="component">
+					<section id="component-basics">
+						<h3>Testing a component</h3>
+						<small>
+							<p>While testing an application, <b>Angular testing utilites</b> is used. Id provides a TestBed in <i>@angular/core/testing</i>, which creates a configurable testing module.</p>
+							<ul>
+								<li><i>TestBed.configureTestingModule</i> takes an @NgModule-like metadata object. This module should be called in every <i>beforeEach</i> section to reset the TestBed state.</li>
+								<li><i>TestBed.createComponent</i> returns a ComponentFixture with an access to the component instance itself and to the DebugElement.</li>
+								<li><i>ComponentFixture.DebugElement</i> is a handle for component's DOM element.</li>
+							</ul>
+						</small>
+					</section>
+					<section id="component-code" data-markdown>
+						<h3>Tested component</h3>
+						<small>
+							<p>
+								import { Component } from '@angular/core';
+
+								@Component({
+								  selector: 'my-app',
+								  template: '< h1>Title: {{title}}< /h1>
+											< h2>Director: {{director}}< /h2>'
+								})
+								export class MovieComponent {
+								  title = 'Back to the Future';
+								  director = 'Robert Zemeckis';
+								}
+							</p>
+						</small>
+					</section>
+					<section id="component-beforeeach" data-markdown>
+						<h3>Test's beforeEach</h3>
+						<small>
+							<p>
+								import { ComponentFixture, TestBed } from '@angular/core/testing';
+								import { By }              from '@angular/platform-browser';
+								import { DebugElement }    from '@angular/core';
+
+								import { MovieComponent } from './movie-inline.component';
+								// (...)
+								beforeEach(() => {
+									TestBed.configureTestingModule({
+										declarations: [ MovieComponent ]});
+									fixture = TestBed.createComponent(MovieComponent);
+									comp = fixture.componentInstance;
+									
+									de = fixture.debugElement.query(By.css('h1'));
+									el = de.nativeElement;
+								});
+							</p>
+						</small>
+					</section>
+					<section id="component-test" data-markdown>
+						<h3>Test of component</h3>
+						<small>
+							<p>
+								it('should show the movie title', () => {
+									comp.title = 'Terminator';
+									fixture.detectChanges();
+									expect(el.textContent).toContain('Terminator');
+								});
+							</p>
+						</small>
+					</section>
+				</section>
+				<section id="good-practices">
+					<h3>Good Practices</h3>
+					<small>
+						<ul>
+							<li>Put your tests it the same folder, as the tested functionality</li>
+						</ul>
+					</small>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
