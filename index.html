@@ -240,6 +240,63 @@
 						</small>
 					</section>
 				</section>
+				<section id="async">
+					<section id="async-basics">
+						<h3>Asynchronous services testing</h3>
+						<small>
+							<p>In general, tests should not make calls to external services. These calls should be emulated. On such calls, a spy should be put.</p>
+							<p>While spying particular methods of service, a real service should be added to <i>providers</i> array, not stub. After spying the async methods, the test becomes synchronous.</p>
+						</small>
+					</section>
+					<section id="async-example" data-markdown>
+						<h3>Example asynchronous method spy</h3>
+						<small>
+							<p>
+								beforeEach(() => {
+									TestBed.configureTestingModule({
+									   declarations: [ MovieComponent ],
+									   providers:    [ ChargeService ],
+									});
+
+									fixture = TestBed.createComponent(MovieComponent);
+									comp    = fixture.componentInstance;
+
+									// the real ChargeService
+									chargeService = fixture.debugElement.injector.get(ChargeService);
+									spy = spyOn(chargeService, 'getCurrentExchangeRate')
+										  .and.returnValue(Promise.resolve(testValue));
+								});
+							</p>
+						</small>
+					</section>
+					<section id="async-example2" data-markdown>
+						<h3>Handling async function</h3>
+						<small>
+							<p>
+								it('should consider the returned promise result', async(() => {
+									fixture.detectChanges();
+									fixture.whenStable().then(() => {
+									fixture.detectChanges();
+									expect(el.textContent).toBe(testValue);
+									});
+								}));
+							</p>
+						</small>
+					</section>
+					<section id="async-example3" data-markdown>
+						<h3>Fake async</h3>
+						<small>
+							<p>
+								it('should consider the returned promise result', fakeAsync(() => {
+									fixture.detectChanges();
+									tick();
+									fixture.detectChanges();
+									expect(el.textContent).toBe(testValue);
+								}));
+							</p>
+						</small>
+					</section>
+				</section>
 				<section id="good-practices">
 					<h3>Good Practices and Hints</h3>
 					<small>
