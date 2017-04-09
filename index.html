@@ -152,11 +152,57 @@
 						</small>
 					</section>
 				</section>
+				<section id="testing-external">
+					<section id="testing-external-basics">
+						<h3>Testing with external templates</h3>
+						<small>
+							<p>External templates are problematic, because Angular compiler must read external files (html and css) before creation of component instance (sunchronous operation). Reading is additionally asynchronous. </p>
+							<p>Therefore asynchronous <i>beforeEach</i> must be used. <i>async</i> is a part of <i>@angular/core/testing</i> library.</p>
+							<p>Additionally to run the tests, TestBed's <i>compileComponents</i> must be executed.</p>
+						</small>
+					</section>
+					<section id="testing-external-example" data-markdown>
+						<h3>Example asynchronous test</h3>
+						<small>
+							<p>
+								beforeEach(async(() => {
+								  TestBed.configureTestingModule({
+									declarations: [ MovieComponent ]
+								  })
+								  .compileComponents();
+								}));
+								// (...)
+							</p>
+						</small>
+					</section>
+					<section id="testing-external-example2" data-markdown>
+						<h3>Second beforeEach</h3>
+						<small>
+							<p>
+								// (the same as before, this one is finally sync)
+								beforeEach(() => {
+									TestBed.configureTestingModule({
+										declarations: [ MovieComponent ]});
+									fixture = TestBed.createComponent(MovieComponent);
+									comp = fixture.componentInstance;
+									
+									de = fixture.debugElement.query(By.css('h1'));
+									el = de.nativeElement;
+								});
+								
+								// or use in: compileComponents().then(...)
+							</p>
+						</small>
+					</section>
+				</section>
 				<section id="good-practices">
-					<h3>Good Practices</h3>
+					<h3>Good Practices and Hints</h3>
 					<small>
 						<ul>
 							<li>Put your tests it the same folder, as the tested functionality</li>
+							<li>For auto changes detection use <i>ComponentFixtureAutoDetect</i> by adding it to the TestBed's providers array</li>
+							<li>TestBed can be configured only once</li>
+							<li>While performin asynchronous tests, first configure the TestBed, and after that execute <i>compileComponents</i></li>
 						</ul>
 					</small>
 				</section>
