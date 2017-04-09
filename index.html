@@ -47,6 +47,8 @@
 							<li><a href="#/tools">Tools</a></li>
 							<li><a href="#/quickstart">Setting Up the Environment</a></li>
 							<li><a href="#/component">Testing a Component</a></li>
+							<li><a href="#/testing-external">Testing with external templates</a></li>
+							<li><a href="#/mocking">Testing with Mocks</a></li>
 							<li><a href="#/good-practices">Good Practices</a></li>
 						</ol>
 					</small>
@@ -66,6 +68,12 @@
 						<h3>Karma configuration</h3>
 						<small>
 						<p>Tests configuration is defined in <i>karma.conf.js</i> file. Tests should follow the dommon filename convention <i>*.spec.ts.</i></p>
+						<i>karma.conf.js</i> loads three additional configuration files:
+						<ul>
+							<li>systemjs.config.js</li>
+							<li>systemjs.config.extras.js</li>
+							<li>karma-test-shim.js</li>
+						</ul>
 						</small>
 					</section>
 					<section id="quickstart-startup" data-markdown>
@@ -191,6 +199,43 @@
 								});
 								
 								// or use in: compileComponents().then(...)
+							</p>
+						</small>
+					</section>
+				</section>
+				<section id="mocking">
+					<section id="mocking-basics">
+						<h3>Testing with Mocks</h3>
+						<small>
+							<p>When components use injected service dependencies, these should not be used while testing. This is because the component's test results should depend on other services results. Therefore services should be mocked.</p>
+							<p>Configured TestBed should not include as provider the real services implementations, but stubs.</p>
+						</small>
+					</section>
+					<section id="mocking-example" data-markdown>
+						<h3>Mocking a service</h3>
+						<small>
+							<p>
+								TestBed.configureTestingModule({
+								   declarations: [ MovieComponent ],
+								   providers:    [ {provide: ChargeService, useValue: chargeServiceStub } ]
+								});
+							</p>
+						</small>
+					</section>
+					<section id="mocking-implementation" data-markdown>
+						<h3>Stub's implementation</h3>
+						<small>
+							<p>
+								chargeServiceStub = {
+								  hasDiscount: true,
+								  user: { name: 'Jan Kowalski'}
+								};
+								//(...)
+								// fetching injected service stub
+								chargeService = fixture.debugElement.injector.get(ChargeService);
+								// or fetch service from root injector
+								chargeService = TestBed.get(ChargeService);
+								// WARNING: do not use chargeServiceStub
 							</p>
 						</small>
 					</section>
